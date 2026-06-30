@@ -3,520 +3,477 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IPTV Panel</title>
+<title>IPTV</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { font-size: 20px; }
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #0d1117; color: #e6edf3;
-  display: flex; height: 100vh; overflow: hidden;
-  -webkit-font-smoothing: antialiased;
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:20px}
+body{
+  font-family:system-ui,-apple-system,sans-serif;
+  background:#0d1117;color:#e6edf3;
+  display:flex;height:100vh;overflow:hidden
 }
-:focus { outline: 3px solid #58a6ff !important; outline-offset: 2px; }
-:focus:not(:focus-visible) { outline: none !important; }
-:focus-visible { outline: 3px solid #58a6ff !important; outline-offset: 2px; }
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-thumb { background: #30363d; border-radius: 5px; }
-::-webkit-scrollbar-track { background: #161b22; }
+:focus-visible{outline:3px solid #58a6ff!important;outline-offset:2px}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-thumb{background:#30363d;border-radius:4px}
+::-webkit-scrollbar-track{background:#161b22}
 
-.sidebar {
-  width: 380px; min-width: 380px; background: #161b22;
-  border-right: 2px solid #30363d; display: flex; flex-direction: column;
+/* Sidebar */
+.sidebar{
+  width:360px;min-width:360px;background:#161b22;
+  border-right:2px solid #30363d;display:flex;flex-direction:column
 }
-.sidebar h1 {
-  padding: 20px; font-size: 1.1rem; border-bottom: 2px solid #30363d;
-  display: flex; align-items: center; gap: 10px;
+.sidebar h1{padding:18px 20px;font-size:1rem;border-bottom:2px solid #30363d}
+.sidebar h1 span{color:#58a6ff}
+.sidebar .search-bar{padding:12px 16px;border-bottom:2px solid #30363d}
+.sidebar .search-bar input{
+  width:100%;padding:12px 14px;border-radius:6px;
+  border:2px solid #30363d;background:#0d1117;color:#e6edf3;
+  font-size:.85rem
 }
-.sidebar h1 span { color: #58a6ff; }
-.sidebar-search { padding: 14px 16px; border-bottom: 2px solid #30363d; }
-.sidebar-search input {
-  width: 100%; padding: 14px 16px; border-radius: 8px;
-  border: 2px solid #30363d; background: #0d1117; color: #e6edf3;
-  font-size: 0.9rem; outline: none;
+.sidebar .search-bar input:focus{border-color:#58a6ff}
+.sidebar .count-bar{padding:8px 20px;font-size:.65rem;color:#8b949e;border-bottom:2px solid #21262d}
+.sidebar .list{flex:1;overflow-y:auto}
+.sidebar .item{
+  padding:12px 20px;cursor:pointer;font-size:.8rem;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid #21262d;min-height:52px
 }
-.sidebar-search input:focus { border-color: #58a6ff; }
-.playlist-count { padding: 10px 20px; font-size: 0.7rem; color: #8b949e; border-bottom: 2px solid #21262d; }
-.playlist-list { flex: 1; overflow-y: auto; }
-.playlist-item {
-  padding: 14px 20px; cursor: pointer; font-size: 0.85rem;
-  display: flex; align-items: center; gap: 12px;
-  border-bottom: 1px solid #21262d; transition: background 0.15s;
-  min-height: 56px;
-}
-.playlist-item:hover, .playlist-item:focus-visible { background: #1c2128; }
-.playlist-item.active { background: #1f6feb22; border-left: 4px solid #58a6ff; }
-.playlist-item .flag { font-size: 1.4rem; }
-.playlist-item .name { flex: 1; font-weight: 500; }
-.playlist-item .badge { font-size: 0.6rem; color: #8b949e; background: #21262d; padding: 4px 10px; border-radius: 10px; }
-.playlist-item .provider { font-size: 0.6rem; color: #58a6ff; background: #1f6feb22; padding: 4px 10px; border-radius: 6px; }
+.sidebar .item:hover,.sidebar .item.active{background:#1c2128}
+.sidebar .item.active{border-left:4px solid #58a6ff}
+.sidebar .item .flag{font-size:1.2rem}
+.sidebar .item .label{flex:1;font-weight:500}
+.sidebar .item .tag{font-size:.55rem;color:#58a6ff;background:#1f6feb22;padding:3px 8px;border-radius:4px}
 
-.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
 
-.topbar {
-  padding: 14px 24px; border-bottom: 2px solid #30363d;
-  display: flex; gap: 12px; align-items: center; flex-shrink: 0;
+/* Top bar */
+.topbar{
+  padding:12px 20px;border-bottom:2px solid #30363d;
+  display:flex;gap:10px;align-items:center;flex-shrink:0
 }
-.topbar h2 { font-size: 1.1rem; white-space: nowrap; margin-right: 8px; }
-.topbar h2 span { color: #58a6ff; }
-.topbar input {
-  flex: 1; padding: 12px 18px; border-radius: 8px;
-  border: 2px solid #30363d; background: #0d1117; color: #e6edf3;
-  font-size: 0.85rem; outline: none; font-family: monospace;
+.topbar h2{font-size:1rem;white-space:nowrap}
+.topbar h2 span{color:#58a6ff}
+.topbar input{
+  flex:1;padding:10px 14px;border-radius:6px;
+  border:2px solid #30363d;background:#0d1117;color:#e6edf3;
+  font-size:.8rem;font-family:monospace
 }
-.topbar input:focus { border-color: #58a6ff; }
-.topbar button {
-  padding: 12px 24px; border-radius: 8px; border: none;
-  background: #238636; color: #fff; cursor: pointer;
-  font-size: 0.85rem; font-weight: 600; white-space: nowrap; min-height: 48px;
+.topbar input:focus{border-color:#58a6ff}
+.topbar button{
+  padding:10px 20px;border-radius:6px;border:none;
+  font-size:.8rem;font-weight:600;cursor:pointer;min-height:44px;white-space:nowrap
 }
-.topbar button:hover { background: #2ea043; }
-.topbar .copy-url { background: #21262d; border: 2px solid #30363d; }
-.topbar .copy-url:hover { background: #30363d; }
+.topbar .btn-load{background:#238636;color:#fff}
+.topbar .btn-load:hover{background:#2ea043}
+.topbar .btn-copy{background:#21262d;color:#e6edf3;border:2px solid #30363d}
+.topbar .btn-copy:hover{background:#30363d}
+.topbar .btn-browse{background:#1f6feb;color:#fff;padding:8px 14px;font-size:.7rem;min-height:38px}
+.topbar .btn-browse:hover{background:#388bfd}
 
-.tabs {
-  display: flex; border-bottom: 2px solid #30363d; flex-shrink: 0;
-  background: #161b22;
+/* Tabs */
+.tabs{
+  display:flex;border-bottom:2px solid #30363d;
+  background:#161b22;flex-shrink:0
 }
-.tab {
-  padding: 14px 28px; font-size: 0.85rem; font-weight: 600;
-  cursor: pointer; color: #8b949e; border-bottom: 3px solid transparent;
-  transition: all 0.15s; min-height: 52px; display: flex; align-items: center; gap: 8px;
+.tab{
+  padding:12px 24px;font-size:.8rem;font-weight:600;
+  cursor:pointer;color:#8b949e;border-bottom:3px solid transparent;
+  min-height:48px;display:flex;align-items:center;gap:6px
 }
-.tab:hover { color: #e6edf3; background: #1c2128; }
-.tab.active { color: #58a6ff; border-bottom-color: #58a6ff; }
-.tab .count { font-size: 0.6rem; background: #21262d; padding: 2px 10px; border-radius: 10px; color: #8b949e; }
-.tab.active .count { background: #1f6feb22; color: #58a6ff; }
+.tab:hover{color:#e6edf3;background:#1c2128}
+.tab.active{color:#58a6ff;border-bottom-color:#58a6ff}
+.tab .badge{font-size:.55rem;background:#21262d;padding:2px 8px;border-radius:8px;color:#8b949e}
+.tab.active .badge{background:#1f6feb22;color:#58a6ff}
 
-.channel-header {
-  padding: 14px 24px; border-bottom: 2px solid #21262d;
-  font-size: 0.8rem; color: #8b949e;
-  display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+/* Channel header */
+.channel-header{
+  padding:10px 20px;border-bottom:2px solid #21262d;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0
 }
-.channel-header .title { font-weight: 700; color: #e6edf3; font-size: 1rem; }
+.channel-header .title{font-weight:700;font-size:.9rem}
+.channel-header .count{font-size:.7rem;color:#8b949e}
 
-.channel-filter { padding: 12px 24px; border-bottom: 2px solid #21262d; flex-shrink: 0; }
-.channel-filter input {
-  width: 100%; padding: 12px 18px; border-radius: 8px;
-  border: 2px solid #30363d; background: #0d1117; color: #e6edf3;
-  font-size: 0.85rem; outline: none;
+/* Channel filter */
+.channel-filter{padding:10px 20px;border-bottom:2px solid #21262d;flex-shrink:0}
+.channel-filter input{
+  width:100%;padding:10px 14px;border-radius:6px;
+  border:2px solid #30363d;background:#0d1117;color:#e6edf3;font-size:.8rem
 }
-.channel-filter input:focus { border-color: #58a6ff; }
+.channel-filter input:focus{border-color:#58a6ff}
 
-.channel-lists { flex: 1; overflow-y: auto; }
-
-.channel-item {
-  padding: 14px 24px; border-bottom: 1px solid #21262d;
-  display: flex; align-items: center; gap: 16px;
-  transition: background 0.15s; cursor: pointer; min-height: 68px;
+/* Channel list */
+.channel-list{flex:1;overflow-y:auto}
+.channel-item{
+  padding:12px 20px;border-bottom:1px solid #21262d;
+  display:flex;align-items:center;gap:14px;min-height:64px;cursor:pointer
 }
-.channel-item:hover, .channel-item:focus-visible { background: #1c2128; }
-.channel-item .info { flex: 1; min-width: 0; }
-.channel-item .ch-name { font-size: 0.9rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.channel-item .ch-url { font-size: 0.55rem; color: #8b949e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: monospace; margin-top: 2px; }
-.channel-item .ch-actions { display: flex; gap: 10px; flex-shrink: 0; }
-.channel-item .ch-actions button {
-  padding: 8px 16px; border-radius: 8px; border: none;
-  font-size: 0.75rem; font-weight: 600; cursor: pointer; min-height: 42px; min-width: 70px;
+.channel-item:hover{background:#1c2128}
+.channel-item .info{flex:1;min-width:0}
+.channel-item .name{font-size:.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.channel-item .url{font-size:.5rem;color:#8b949e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;margin-top:2px}
+.channel-item .actions{display:flex;gap:8px;flex-shrink:0}
+.channel-item .actions button{
+  padding:8px 14px;border-radius:6px;border:none;
+  font-size:.7rem;font-weight:600;cursor:pointer;min-height:40px;min-width:60px
 }
-.channel-item .ch-actions .play-btn { background: #238636; color: #fff; }
-.channel-item .ch-actions .play-btn:hover { background: #2ea043; }
-.channel-item .ch-actions .copy-btn { background: #21262d; color: #e6edf3; border: 2px solid #30363d; }
-.channel-item .ch-actions .copy-btn:hover { background: #30363d; }
+.channel-item .actions .play{background:#238636;color:#fff}
+.channel-item .actions .play:hover{background:#2ea043}
+.channel-item .actions .copy{background:#21262d;color:#e6edf3;border:2px solid #30363d}
+.channel-item .actions .copy:hover{background:#30363d}
 
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #8b949e; gap: 16px; }
-.empty-state svg { opacity: 0.4; width: 80px; height: 80px; }
-.empty-state p { font-size: 1rem; }
-.loading { display: flex; align-items: center; justify-content: center; height: 100%; color: #8b949e; gap: 14px; font-size: 1rem; }
-.spinner { width: 32px; height: 32px; border: 3px solid #30363d; border-top-color: #58a6ff; border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* Country group */
+.country-group .group-header{
+  padding:8px 20px;font-size:.8rem;font-weight:700;color:#58a6ff;
+  background:#161b22;border-bottom:1px solid #21262d;
+  display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:5
+}
+.country-group .group-header .flag{font-size:1rem}
+.country-group .group-header .num{font-size:.55rem;color:#8b949e;margin-left:auto}
 
-.modal-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 1000; }
-.modal-overlay.open { display: block; }
-.modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; background: #000; }
-.modal-header { position: absolute; top: 0; left: 0; right: 0; z-index: 10; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(rgba(0,0,0,0.8), transparent); }
-.modal-header h2 { font-size: 1rem; font-weight: 600; }
-.modal-header .close-btn { background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 8px 16px; border-radius: 8px; min-height: 48px; min-width: 48px; }
-.modal-header .close-btn:hover { background: rgba(255,255,255,0.3); }
-.modal-body { flex: 1; display: flex; align-items: center; justify-content: center; }
-.modal-body video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+/* States */
+.empty-state,.loading-state{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;height:100%;color:#8b949e;gap:12px
+}
+.spinner{width:28px;height:28px;border:3px solid #30363d;border-top-color:#58a6ff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #238636; color: #fff; padding: 16px 40px; border-radius: 12px; font-size: 1rem; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none; font-weight: 600; }
-.toast.show { opacity: 1; }
+/* Player modal */
+.player-overlay{display:none;position:fixed;inset:0;background:#000;z-index:1000}
+.player-overlay.open{display:block}
+.player-wrap{width:100%;height:100%;display:flex;flex-direction:column;background:#000}
+.player-head{
+  position:absolute;top:0;left:0;right:0;z-index:10;
+  padding:14px 20px;display:flex;justify-content:space-between;
+  align-items:center;background:linear-gradient(rgba(0,0,0,.8),transparent)
+}
+.player-head h2{font-size:.9rem;font-weight:600}
+.player-head .close{
+  background:rgba(255,255,255,.15);border:none;color:#fff;
+  font-size:1.3rem;cursor:pointer;padding:8px 16px;border-radius:6px;min-height:44px;min-width:44px
+}
+.player-head .close:hover{background:rgba(255,255,255,.3)}
+.player-body{flex:1;display:flex;align-items:center;justify-content:center}
+.player-body video{width:100%;height:100%;object-fit:contain;background:#000}
 
-@media (max-width: 1200px) { html { font-size: 16px; } .sidebar { width: 300px; min-width: 300px; } }
-@media (max-width: 768px) { html { font-size: 14px; } .sidebar { width: 260px; min-width: 260px; } .channel-item { flex-direction: column; align-items: flex-start; } .channel-item .ch-actions { align-self: flex-end; } }
-@media (max-width: 600px) { .sidebar { display: none; } .sidebar.mobile-show { display: flex; position: fixed; inset: 0; z-index: 500; width: 100%; } .topbar { flex-wrap: wrap; } }
+/* Toast */
+.toast{
+  position:fixed;bottom:36px;left:50%;transform:translateX(-50%);
+  background:#238636;color:#fff;padding:14px 36px;border-radius:10px;
+  font-size:.9rem;z-index:2000;opacity:0;transition:opacity .3s;
+  pointer-events:none;font-weight:600
+}
+.toast.show{opacity:1}
+
+@media(max-width:1200px){html{font-size:16px}.sidebar{width:300px;min-width:300px}}
+@media(max-width:768px){html{font-size:14px}.sidebar{width:260px;min-width:260px}.channel-item{flex-direction:column;align-items:flex-start}.channel-item .actions{align-self:flex-end}}
+@media(max-width:600px){.sidebar{display:none}.sidebar.open{display:flex;position:fixed;inset:0;z-index:500;width:100%}.topbar{flex-wrap:wrap}}
 </style>
 </head>
 <body>
 
-<div class="sidebar" id="sidebar" style="display:none">
-  <h1>📺 <span>IPTV</span> <span style="font-size:0.6rem;color:#8b949e;margin-left:auto">Countries</span></h1>
-  <div class="sidebar-search"><input type="text" id="sidebarSearch" placeholder="Search countries..." oninput="filterPlaylists()"></div>
-  <div class="playlist-count" id="playlistCount"></div>
-  <div class="playlist-list" id="playlistList"></div>
+<div class="sidebar" id="sidebar">
+  <h1>📺 <span>IPTV</span></h1>
+  <div class="search-bar"><input type="text" id="searchPlaylists" placeholder="Search countries..."></div>
+  <div class="count-bar" id="countBar"></div>
+  <div class="list" id="playlistList"></div>
 </div>
 
 <div class="main">
   <div class="topbar">
     <h2>📺 <span>IPTV</span></h2>
-    <button id="showSidebarBtn" style="background:#1f6feb;padding:8px 16px;font-size:0.75rem;min-height:40px" onclick="toggleSidebar()">☰ Browse</button>
-    <input type="text" id="customUrl" placeholder="Paste any M3U URL...">
-    <button onclick="loadCustomUrl()">Load</button>
-    <button class="copy-url" onclick="copyCurrentUrl()">Copy URL</button>
+    <button class="btn-browse" id="btnBrowse">☰ Browse</button>
+    <input type="text" id="customUrl" placeholder="Paste M3U URL...">
+    <button class="btn-load" id="btnLoad">Load</button>
+    <button class="btn-copy" id="btnCopy">Copy URL</button>
   </div>
 
   <div class="tabs" id="tabs">
-    <div class="tab active" data-tab="countries" onclick="switchTab('countries')">🌍 Country</div>
-    <div class="tab" data-tab="movies" onclick="switchTab('movies')">🎬 Movies <span class="count" id="countMovies"></span></div>
-    <div class="tab" data-tab="films" onclick="switchTab('films')">🎞️ Films <span class="count" id="countFilms"></span></div>
+    <div class="tab active" data-tab="countries">🌍 Country</div>
+    <div class="tab" data-tab="movies">🎬 Movies <span class="badge" id="moviesBadge"></span></div>
+    <div class="tab" data-tab="films">🎞️ Films <span class="badge" id="filmsBadge"></span></div>
   </div>
 
   <div class="channel-header">
-    <span class="title" id="currentPlaylistName">Select a country</span>
-    <span id="channelCount"></span>
+    <span class="title" id="currentTitle">Select a country</span>
+    <span class="count" id="channelCount"></span>
   </div>
 
-  <div class="channel-filter" id="channelFilter" style="display:none">
-    <input type="text" id="channelSearch" placeholder="Search channels..." oninput="filterChannels()">
+  <div class="channel-filter" id="channelFilter">
+    <input type="text" id="searchChannels" placeholder="Search channels...">
   </div>
 
-  <div class="channel-lists" id="channelList">
-    <div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><p>Choose a country or category above</p></div>
+  <div class="channel-list" id="channelList">
+    <div class="empty-state"><p>Choose a country or category above</p></div>
   </div>
 </div>
 
-<div class="modal-overlay" id="playerModal">
-  <div class="modal-content">
-    <div class="modal-header"><h2 id="playerTitle">Now Playing</h2><button class="close-btn" onclick="closePlayer()">✕</button></div>
-    <div class="modal-body"><video id="playerVideo" controls autoplay playsinline></video></div>
+<div class="player-overlay" id="playerOverlay">
+  <div class="player-wrap">
+    <div class="player-head"><h2 id="playerTitle">Now Playing</h2><button class="close" id="btnClosePlayer">✕</button></div>
+    <div class="player-body"><video id="playerVideo" controls autoplay playsinline></video></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const BASE = 'https://iptv-org.github.io/iptv';
-const CAT_BASE = 'https://iptv-org.github.io/iptv/categories';
-let currentChannels = [];
-let filteredChannels = [];
-let currentPlaylistId = null;
-let currentPlaylistUrl = '';
-let currentSource = 'country';
-let hls = null;
+(function(){
+  var BASE = 'https://iptv-org.github.io/iptv';
+  var CAT_BASE = BASE + '/categories';
+  var RAW_BASE = 'https://raw.githubusercontent.com/iptv-org/iptv/master/streams';
 
-const PLAYLISTS = {"ad":"Andorra","ae":"United Arab Emirates","af":"Afghanistan","ag":"Antigua and Barbuda","al":"Albania","am":"Armenia","ao":"Angola","ar":"Argentina","at":"Austria","au":"Australia","aw":"Aruba","az":"Azerbaijan","ba":"Bosnia and Herzegovina","bb":"Barbados","bd":"Bangladesh","be":"Belgium","bf":"Burkina Faso","bg":"Bulgaria","bh":"Bahrain","bi":"Burundi","bj":"Benin","bm":"Bermuda","bn":"Brunei","bo":"Bolivia","bq":"Caribbean Netherlands","br":"Brazil","bs":"Bahamas","bw":"Botswana","by":"Belarus","bz":"Belize","ca":"Canada","cd":"DR Congo","cf":"Central African Republic","cg":"Congo","ch":"Switzerland","ci":"Côte d'Ivoire","cl":"Chile","cm":"Cameroon","cn":"China","co":"Colombia","cr":"Costa Rica","cu":"Cuba","cv":"Cape Verde","cw":"Curaçao","cy":"Cyprus","cz":"Czechia","de":"Germany","dj":"Djibouti","dk":"Denmark","dm":"Dominica","do":"Dominican Republic","dz":"Algeria","ec":"Ecuador","ee":"Estonia","eg":"Egypt","eh":"Western Sahara","er":"Eritrea","es":"Spain","et":"Ethiopia","fi":"Finland","fj":"Fiji","fm":"Micronesia","fo":"Faroe Islands","fr":"France","ga":"Gabon","ge":"Georgia","gf":"French Guiana","gh":"Ghana","gl":"Greenland","gm":"Gambia","gn":"Guinea","gp":"Guadeloupe","gq":"Equatorial Guinea","gr":"Greece","gt":"Guatemala","gu":"Guam","gy":"Guyana","hk":"Hong Kong","hn":"Honduras","hr":"Croatia","ht":"Haiti","hu":"Hungary","id":"Indonesia","ie":"Ireland","il":"Israel","in":"India","iq":"Iraq","ir":"Iran","is":"Iceland","it":"Italy","jm":"Jamaica","jo":"Jordan","jp":"Japan","ke":"Kenya","kg":"Kyrgyzstan","kh":"Cambodia","km":"Comoros","kn":"Saint Kitts and Nevis","kp":"North Korea","kr":"South Korea","kw":"Kuwait","kz":"Kazakhstan","la":"Laos","lb":"Lebanon","lc":"Saint Lucia","li":"Liechtenstein","lk":"Sri Lanka","lr":"Liberia","lt":"Lithuania","lu":"Luxembourg","lv":"Latvia","ly":"Libya","ma":"Morocco","mc":"Monaco","md":"Moldova","me":"Montenegro","mg":"Madagascar","mk":"North Macedonia","ml":"Mali","mm":"Myanmar","mn":"Mongolia","mo":"Macau","mq":"Martinique","mr":"Mauritania","mt":"Malta","mu":"Mauritius","mv":"Maldives","mw":"Malawi","mx":"Mexico","my":"Malaysia","mz":"Mozambique","na":"Namibia","ne":"Niger","ng":"Nigeria","ni":"Nicaragua","nl":"Netherlands","no":"Norway","np":"Nepal","nz":"New Zealand","om":"Oman","pa":"Panama","pe":"Peru","pf":"French Polynesia","pg":"Papua New Guinea","ph":"Philippines","pk":"Pakistan","pl":"Poland","pr":"Puerto Rico","ps":"Palestine","pt":"Portugal","py":"Paraguay","qa":"Qatar","ro":"Romania","rs":"Serbia","ru":"Russia","rw":"Rwanda","sa":"Saudi Arabia","sd":"Sudan","se":"Sweden","sg":"Singapore","si":"Slovenia","sk":"Slovakia","sl":"Sierra Leone","sm":"San Marino","sn":"Senegal","so":"Somalia","sr":"Suriname","st":"São Tomé and Príncipe","sv":"El Salvador","sx":"Sint Maarten","sy":"Syria","td":"Chad","tg":"Togo","th":"Thailand","tj":"Tajikistan","tl":"Timor-Leste","tm":"Turkmenistan","tn":"Tunisia","tr":"Turkey","tt":"Trinidad and Tobago","tw":"Taiwan","tz":"Tanzania","ua":"Ukraine","ug":"Uganda","uk":"United Kingdom","us":"United States","uy":"Uruguay","uz":"Uzbekistan","va":"Vatican City","ve":"Venezuela","vg":"British Virgin Islands","vi":"U.S. Virgin Islands","vn":"Vietnam","ws":"Samoa","xk":"Kosovo","ye":"Yemen","yt":"Mayotte","za":"South Africa","zm":"Zambia","zw":"Zimbabwe"};
+  var state = {
+    channels: [],
+    filtered: [],
+    playlistId: null,
+    playlistUrl: '',
+    tab: 'countries',
+    playlists: []
+  };
 
-const FLAGS = {"ad":"🇦🇩","ae":"🇦🇪","af":"🇦🇫","ag":"🇦🇬","al":"🇦🇱","am":"🇦🇲","ao":"🇦🇴","ar":"🇦🇷","at":"🇦🇹","au":"🇦🇺","aw":"🇦🇼","az":"🇦🇿","ba":"🇧🇦","bb":"🇧🇧","bd":"🇧🇩","be":"🇧🇪","bf":"🇧🇫","bg":"🇧🇬","bh":"🇧🇭","bi":"🇧🇮","bj":"🇧🇯","bm":"🇧🇲","bn":"🇧🇳","bo":"🇧🇴","bq":"🇧🇶","br":"🇧🇷","bs":"🇧🇸","bw":"🇧🇼","by":"🇧🇾","bz":"🇧🇿","ca":"🇨🇦","cd":"🇨🇩","cf":"🇨🇫","cg":"🇨🇬","ch":"🇨🇭","ci":"🇨🇮","cl":"🇨🇱","cm":"🇨🇲","cn":"🇨🇳","co":"🇨🇴","cr":"🇨🇷","cu":"🇨🇺","cv":"🇨🇻","cw":"🇨🇼","cy":"🇨🇾","cz":"🇨🇿","de":"🇩🇪","dj":"🇩🇯","dk":"🇩🇰","dm":"🇩🇲","do":"🇩🇴","dz":"🇩🇿","ec":"🇪🇨","ee":"🇪🇪","eg":"🇪🇬","eh":"🇪🇭","er":"🇪🇷","es":"🇪🇸","et":"🇪🇹","fi":"🇫🇮","fj":"🇫🇯","fm":"🇫🇲","fo":"🇫🇴","fr":"🇫🇷","ga":"🇬🇦","ge":"🇬🇪","gf":"🇬🇫","gh":"🇬🇭","gl":"🇬🇱","gm":"🇬🇲","gn":"🇬🇳","gp":"🇬🇵","gq":"🇬🇶","gr":"🇬🇷","gt":"🇬🇹","gu":"🇬🇺","gy":"🇬🇾","hk":"🇭🇰","hn":"🇭🇳","hr":"🇭🇷","ht":"🇭🇹","hu":"🇭🇺","id":"🇮🇩","ie":"🇮🇪","il":"🇮🇱","in":"🇮🇳","iq":"🇮🇶","ir":"🇮🇷","is":"🇮🇸","it":"🇮🇹","jm":"🇯🇲","jo":"🇯🇴","jp":"🇯🇵","ke":"🇰🇪","kg":"🇰🇬","kh":"🇰🇭","km":"🇰🇲","kn":"🇰🇳","kp":"🇰🇵","kr":"🇰🇷","kw":"🇰🇼","kz":"🇰🇿","la":"🇱🇦","lb":"🇱🇧","lc":"🇱🇨","li":"🇱🇮","lk":"🇱🇰","lr":"🇱🇷","lt":"🇱🇹","lu":"🇱🇺","lv":"🇱🇻","ly":"🇱🇾","ma":"🇲🇦","mc":"🇲🇨","md":"🇲🇩","me":"🇲🇪","mg":"🇲🇬","mk":"🇲🇰","ml":"🇲🇱","mm":"🇲🇲","mn":"🇲🇳","mo":"🇲🇴","mq":"🇲🇶","mr":"🇲🇷","mt":"🇲🇹","mu":"🇲🇺","mv":"🇲🇻","mw":"🇲🇼","mx":"🇲🇽","my":"🇲🇾","mz":"🇲🇿","na":"🇳🇦","ne":"🇳🇪","ng":"🇳🇬","ni":"🇳🇮","nl":"🇳🇱","no":"🇳🇴","np":"🇳🇵","nz":"🇳🇿","om":"🇴🇲","pa":"🇵🇦","pe":"🇵🇪","pf":"🇵🇫","pg":"🇵🇬","ph":"🇵🇭","pk":"🇵🇰","pl":"🇵🇱","pr":"🇵🇷","ps":"🇵🇸","pt":"🇵🇹","py":"🇵🇾","qa":"🇶🇦","ro":"🇷🇴","rs":"🇷🇸","ru":"🇷🇺","rw":"🇷🇼","sa":"🇸🇦","sd":"🇸🇩","se":"🇸🇪","sg":"🇸🇬","si":"🇸🇮","sk":"🇸🇰","sl":"🇸🇱","sm":"🇸🇲","sn":"🇸🇳","so":"🇸🇴","sr":"🇸🇷","st":"🇸🇹","sv":"🇸🇻","sx":"🇸🇽","sy":"🇸🇾","td":"🇹🇩","tg":"🇹🇬","th":"🇹🇭","tj":"🇹🇯","tl":"🇹🇱","tm":"🇹🇲","tn":"🇹🇳","tr":"🇹🇷","tt":"🇹🇹","tw":"🇹🇼","tz":"🇹🇿","ua":"🇺🇦","ug":"🇺🇬","uk":"🇬🇧","us":"🇺🇸","uy":"🇺🇾","uz":"🇺🇿","va":"🇻🇦","ve":"🇻🇪","vg":"🇻🇬","vi":"🇻🇮","vn":"🇻🇳","ws":"🇼🇸","xk":"🇽🇰","ye":"🇾🇪","yt":"🇾🇹","za":"🇿🇦","zm":"🇿🇲","zw":"🇿🇼"};
-
-const PROVIDER_PREFIXES = { 'pluto':'Pluto TV','samsung':'Samsung TV','rakuten':'Rakuten','distro':'Distro TV','bbc':'BBC','cbsn':'CBS News','pbs':'PBS','stirr':'Stirr','tubi':'Tubi','xumo':'Xumo','roku':'Roku','plex':'Plex','vizio':'Vizio','tcl':'TCL','firetv':'Fire TV','abcnews':'ABC News','amagi':'Amagi' };
-
-function getFlag(code) { const c = code.split('_')[0]; return FLAGS[c] || ''; }
-
-function extractCountry(tvgId) {
-  if (!tvgId) return '';
-  var m = tvgId.match(/\.([a-z]{2})(?:@|$)/i);
-  return m ? m[1].toLowerCase() : '';
-}
-
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
-  document.querySelector('.tab[data-tab="'+tab+'"]').classList.add('active');
-  document.getElementById('channelSearch').value = '';
-  currentSource = tab;
-
+  var hls = null;
+  var video = document.getElementById('playerVideo');
+  var channelList = document.getElementById('channelList');
+  var channelFilter = document.getElementById('channelFilter');
+  var searchChannels = document.getElementById('searchChannels');
+  var currentTitle = document.getElementById('currentTitle');
+  var channelCount = document.getElementById('channelCount');
+  var customUrl = document.getElementById('customUrl');
+  var toast = document.getElementById('toast');
   var sidebar = document.getElementById('sidebar');
-  if (tab === 'countries') {
-    sidebar.style.display = 'flex';
-    document.getElementById('showSidebarBtn').style.display = 'inline-block';
-    if (currentPlaylistUrl && currentPlaylistUrl.indexOf('/streams/') > -1) {
-      selectPlaylist(currentPlaylistId);
-    } else if (currentPlaylistId) {
-      selectPlaylist(currentPlaylistId);
-    } else {
-      selectPlaylist('us');
+
+  var flags = {"ad":"🇦🇩","ae":"🇦🇪","af":"🇦🇫","ag":"🇦🇬","al":"🇦🇱","am":"🇦🇲","ao":"🇦🇴","ar":"🇦🇷","at":"🇦🇹","au":"🇦🇺","aw":"🇦🇼","az":"🇦🇿","ba":"🇧🇦","bb":"🇧🇧","bd":"🇧🇩","be":"🇧🇪","bf":"🇧🇫","bg":"🇧🇬","bh":"🇧🇭","bi":"🇧🇮","bj":"🇧🇯","bm":"🇧🇲","bn":"🇧🇳","bo":"🇧🇴","bq":"🇧🇶","br":"🇧🇷","bs":"🇧🇸","bw":"🇧🇼","by":"🇧🇾","bz":"🇧🇿","ca":"🇨🇦","cd":"🇨🇩","cf":"🇨🇫","cg":"🇨🇬","ch":"🇨🇭","ci":"🇨🇮","cl":"🇨🇱","cm":"🇨🇲","cn":"🇨🇳","co":"🇨🇴","cr":"🇨🇷","cu":"🇨🇺","cv":"🇨🇻","cw":"🇨🇼","cy":"🇨🇾","cz":"🇨🇿","de":"🇩🇪","dj":"🇩🇯","dk":"🇩🇰","dm":"🇩🇲","do":"🇩🇴","dz":"🇩🇿","ec":"🇪🇨","ee":"🇪🇪","eg":"🇪🇬","eh":"🇪🇭","er":"🇪🇷","es":"🇪🇸","et":"🇪🇹","fi":"🇫🇮","fj":"🇫🇯","fm":"🇫🇲","fo":"🇫🇴","fr":"🇫🇷","ga":"🇬🇦","ge":"🇬🇪","gf":"🇬🇫","gh":"🇬🇭","gl":"🇬🇱","gm":"🇬🇲","gn":"🇬🇳","gp":"🇬🇵","gq":"🇬🇶","gr":"🇬🇷","gt":"🇬🇹","gu":"🇬🇺","gy":"🇬🇾","hk":"🇭🇰","hn":"🇭🇳","hr":"🇭🇷","ht":"🇭🇹","hu":"🇭🇺","id":"🇮🇩","ie":"🇮🇪","il":"🇮🇱","in":"🇮🇳","iq":"🇮🇶","ir":"🇮🇷","is":"🇮🇸","it":"🇮🇹","jm":"🇯🇲","jo":"🇯🇴","jp":"🇯🇵","ke":"🇰🇪","kg":"🇰🇬","kh":"🇰🇭","km":"🇰🇲","kn":"🇰🇳","kp":"🇰🇵","kr":"🇰🇷","kw":"🇰🇼","kz":"🇰🇿","la":"🇱🇦","lb":"🇱🇧","lc":"🇱🇨","li":"🇱🇮","lk":"🇱🇰","lr":"🇱🇷","lt":"🇱🇹","lu":"🇱🇺","lv":"🇱🇻","ly":"🇱🇾","ma":"🇲🇦","mc":"🇲🇨","md":"🇲🇩","me":"🇲🇪","mg":"🇲🇬","mk":"🇲🇰","ml":"🇲🇱","mm":"🇲🇲","mn":"🇲🇳","mo":"🇲🇴","mq":"🇲🇶","mr":"🇲🇷","mt":"🇲🇹","mu":"🇲🇺","mv":"🇲🇻","mw":"🇲🇼","mx":"🇲🇽","my":"🇲🇾","mz":"🇲🇿","na":"🇳🇦","ne":"🇳🇪","ng":"🇳🇬","ni":"🇳🇮","nl":"🇳🇱","no":"🇳🇴","np":"🇳🇵","nz":"🇳🇿","om":"🇴🇲","pa":"🇵🇦","pe":"🇵🇪","pf":"🇵🇫","pg":"🇵🇬","ph":"🇵🇭","pk":"🇵🇰","pl":"🇵🇱","pr":"🇵🇷","ps":"🇵🇸","pt":"🇵🇹","py":"🇵🇾","qa":"🇶🇦","ro":"🇷🇴","rs":"🇷🇸","ru":"🇷🇺","rw":"🇷🇼","sa":"🇸🇦","sd":"🇸🇩","se":"🇸🇪","sg":"🇸🇬","si":"🇸🇮","sk":"🇸🇰","sl":"🇸🇱","sm":"🇸🇲","sn":"🇸🇳","so":"🇸🇴","sr":"🇸🇷","st":"🇸🇹","sv":"🇸🇻","sx":"🇸🇽","sy":"🇸🇾","sz":"🇸🇿","td":"🇹🇩","tg":"🇹🇬","th":"🇹🇭","tj":"🇹🇯","tl":"🇹🇱","tm":"🇹🇲","tn":"🇹🇳","to":"🇹🇴","tr":"🇹🇷","tt":"🇹🇹","tv":"🇹🇻","tw":"🇹🇼","tz":"🇹🇿","ua":"🇺🇦","ug":"🇺🇬","us":"🇺🇸","uy":"🇺🇾","uz":"🇺🇿","vc":"🇻🇨","ve":"🇻🇪","vg":"🇻🇬","vi":"🇻🇮","vn":"🇻🇳","vu":"🇻🇺","ws":"🇼🇸","xk":"🇽🇰","ye":"🇾🇪","za":"🇿🇦","zm":"🇿🇲","zw":"🇿🇼"};
+  var countries = {"ad":"Andorra","ae":"United Arab Emirates","af":"Afghanistan","ag":"Antigua and Barbuda","al":"Albania","am":"Armenia","ao":"Angola","ar":"Argentina","at":"Austria","au":"Australia","aw":"Aruba","az":"Azerbaijan","ba":"Bosnia and Herzegovina","bb":"Barbados","bd":"Bangladesh","be":"Belgium","bf":"Burkina Faso","bg":"Bulgaria","bh":"Bahrain","bi":"Burundi","bj":"Benin","bm":"Bermuda","bn":"Brunei","bo":"Bolivia","bq":"Caribbean Netherlands","br":"Brazil","bs":"Bahamas","bw":"Botswana","by":"Belarus","bz":"Belize","ca":"Canada","cd":"DR Congo","cf":"Central African Republic","cg":"Congo","ch":"Switzerland","ci":"Côte d'Ivoire","cl":"Chile","cm":"Cameroon","cn":"China","co":"Colombia","cr":"Costa Rica","cu":"Cuba","cv":"Cape Verde","cw":"Curaçao","cy":"Cyprus","cz":"Czechia","de":"Germany","dj":"Djibouti","dk":"Denmark","dm":"Dominica","do":"Dominican Republic","dz":"Algeria","ec":"Ecuador","ee":"Estonia","eg":"Egypt","eh":"Western Sahara","er":"Eritrea","es":"Spain","et":"Ethiopia","fi":"Finland","fj":"Fiji","fm":"Micronesia","fo":"Faroe Islands","fr":"France","ga":"Gabon","ge":"Georgia","gf":"French Guiana","gh":"Ghana","gl":"Greenland","gm":"Gambia","gn":"Guinea","gp":"Guadeloupe","gq":"Equatorial Guinea","gr":"Greece","gt":"Guatemala","gu":"Guam","gy":"Guyana","hk":"Hong Kong","hn":"Honduras","hr":"Croatia","ht":"Haiti","hu":"Hungary","id":"Indonesia","ie":"Ireland","il":"Israel","in":"India","iq":"Iraq","ir":"Iran","is":"Iceland","it":"Italy","jm":"Jamaica","jo":"Jordan","jp":"Japan","ke":"Kenya","kg":"Kyrgyzstan","kh":"Cambodia","km":"Comoros","kn":"Saint Kitts and Nevis","kp":"North Korea","kr":"South Korea","kw":"Kuwait","kz":"Kazakhstan","la":"Laos","lb":"Lebanon","lc":"Saint Lucia","li":"Liechtenstein","lk":"Sri Lanka","lr":"Liberia","lt":"Lithuania","lu":"Luxembourg","lv":"Latvia","ly":"Libya","ma":"Morocco","mc":"Monaco","md":"Moldova","me":"Montenegro","mg":"Madagascar","mk":"North Macedonia","ml":"Mali","mm":"Myanmar","mn":"Mongolia","mo":"Macau","mq":"Martinique","mr":"Mauritania","mt":"Malta","mu":"Mauritius","mv":"Maldives","mw":"Malawi","mx":"Mexico","my":"Malaysia","mz":"Mozambique","na":"Namibia","ne":"Niger","ng":"Nigeria","ni":"Nicaragua","nl":"Netherlands","no":"Norway","np":"Nepal","nz":"New Zealand","om":"Oman","pa":"Panama","pe":"Peru","pf":"French Polynesia","pg":"Papua New Guinea","ph":"Philippines","pk":"Pakistan","pl":"Poland","pr":"Puerto Rico","ps":"Palestine","pt":"Portugal","py":"Paraguay","qa":"Qatar","ro":"Romania","rs":"Serbia","ru":"Russia","rw":"Rwanda","sa":"Saudi Arabia","sd":"Sudan","se":"Sweden","sg":"Singapore","si":"Slovenia","sk":"Slovakia","sl":"Sierra Leone","sm":"San Marino","sn":"Senegal","so":"Somalia","sr":"Suriname","st":"Sao Tome and Principe","sv":"El Salvador","sx":"Sint Maarten","sy":"Syria","sz":"Eswatini","td":"Chad","tg":"Togo","th":"Thailand","tj":"Tajikistan","tl":"Timor-Leste","tm":"Turkmenistan","tn":"Tunisia","to":"Tonga","tr":"Turkey","tt":"Trinidad and Tobago","tv":"Tuvalu","tw":"Taiwan","tz":"Tanzania","ua":"Ukraine","ug":"Uganda","us":"United States","uy":"Uruguay","uz":"Uzbekistan","vc":"Saint Vincent and the Grenadines","ve":"Venezuela","vg":"British Virgin Islands","vi":"US Virgin Islands","vn":"Vietnam","vu":"Vanuatu","ws":"Samoa","xk":"Kosovo","ye":"Yemen","za":"South Africa","zm":"Zambia","zw":"Zimbabwe"};
+  var providers = {'pluto':'Pluto TV','samsung':'Samsung TV','rakuten':'Rakuten','distro':'Distro TV','bbc':'BBC','cbsn':'CBS News','pbs':'PBS','stirr':'Stirr','tubi':'Tubi','xumo':'Xumo','roku':'Roku','plex':'Plex','vizio':'Vizio','tcl':'TCL','firetv':'Fire TV','abcnews':'ABC News','amagi':'Amagi'};
+
+  function getFlag(id){var c=id.split('_')[0];return flags[c]||''}
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(function(){toast.classList.remove('show')},2000)}
+  function extractCountry(tvgId){var m=tvgId.match(/\.([a-z]{2})(?:@|$)/i);return m?m[1].toLowerCase():''}
+
+  function parseM3u(data){
+    var out=[],cur=null,lines=data.split('\n');
+    for(var i=0;i<lines.length;i++){
+      var t=lines[i].trim();
+      if(t.startsWith('#EXTM3U')) continue;
+      if(t.startsWith('#EXTINF:')){
+        cur={name:'',url:'',tvgId:''};
+        var m=t.match(/,(.+)$/);if(m) cur.name=m[1].trim();
+        var id=t.match(/tvg-id="([^"]*)"/);if(id) cur.tvgId=id[1];
+      }else if(t&&!t.startsWith('#')&&cur){cur.url=t;out.push(cur);cur=null}
     }
-  } else {
-    sidebar.style.display = 'none';
-    document.getElementById('showSidebarBtn').style.display = 'none';
-    document.getElementById('channelFilter').style.display = 'none';
-    document.getElementById('channelCount').textContent = '';
-    document.getElementById('currentPlaylistName').textContent = tab === 'movies' ? '🎬 Movies' : '🎞️ Films';
-
-    var url = tab === 'movies'
-      ? CAT_BASE + '/movies.m3u'
-      : CAT_BASE + '/series.m3u';
-    currentPlaylistUrl = url;
-    loadCategory(url);
+    return out;
   }
-}
 
-function loadCategory(url) {
-  var list = document.getElementById('channelList');
-  list.innerHTML = '<div class="loading"><div class="spinner"></div><span>Loading...</span></div>';
-  document.getElementById('channelFilter').style.display = 'none';
-  document.getElementById('customUrl').value = url;
-
-  fetch(url)
-    .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
-    .then(function(data) {
-      var channels = parseM3u(data);
-      currentChannels = channels;
-      filteredChannels = channels;
-      var name = currentSource === 'movies' ? '🎬 Movies' : '🎞️ Films';
-      displayChannelsByCountry(channels);
-      document.getElementById('channelCount').textContent = channels.length + ' channels';
-      document.getElementById('channelFilter').style.display = 'block';
-      document.getElementById('channelSearch').value = '';
-    })
-    .catch(function(err) {
-      list.innerHTML = '<div class="empty-state"><p style="color:#f85149">Failed: '+escapeHtml(err.message)+'</p></div>';
+  function buildPlaylists(){
+    var files = ["ad","ae","af","ag","al","am","ao","ar","at","at_pluto","at_samsung","au","au_samsung","aw","az","ba","ba_morescreens","bb","bd","be","be_samsung","bf","bg","bh","bi","bj","bm","bn","bo","bq","br","br_pluto","br_samsung","bs","bw","by","bz","bz_nexgen","ca","ca_pluto","ca_samsung","ca_stingray","cd","cf","cg","ch","ch_pluto","ch_samsung","ci","cl","cm","cn","cn_112114","cn_cctv","cn_cgtn","cn_yeslivetv","co","cr","cu","cv","cw","cy","cz","de","de_pluto","de_rakuten","de_samsung","dj","dk","dk_pluto","dk_samsung","dm","do","dz","ec","ee","eg","eh","er","es","es_pluto","es_rakuten","es_samsung","es_yowi","et","fi","fi_rakuten","fi_samsung","fj","fm","fo","fr","fr_bfm","fr_fashiontv","fr_groupecanalplus","fr_groupem6","fr_persiana","fr_pluto","fr_rakuten","fr_samsung","ga","ge","gf","gh","gl","gm","gn","gp","gq","gr","gt","gt_streamhispanatv","gu","gy","hk","hn","hr","ht","hu","id","id_denstv","ie","ie_samsung","il","in","in_distro","in_doordarshan","in_pishow","in_samsung","in_tango","iq","ir","ir_telewebion","ir_wnslive","is","it","it_pluto","it_rakuten","it_samsung","jm","jo","jp","ke","kg","kh","kh_happywatch99","km","kn","kp","kr","kw","kz","la","lb","lc","li","lk","lr","lt","lu","lu_samsung","lv","ly","ma","mc","md","me","mg","mk","ml","mm","mn","mn_skygo","mo","mq","mr","mt","mt_smashplus","mu","mv","mw","mx","mx_amagi","mx_multimedios","mx_pluto","mx_samsung","my","mz","na","ne","ng","ni","nl","nl_samsung","no","no_pluto","no_samsung","np","nz","nz_samsung","om","pa","pe","pe_opencaster","pf","pg","ph","ph_comclark","pk","pl","pl_mediateka","pl_rakuten","pr","ps","pt","pt_samsung","py","qa","ro","rs","ru","ru_15plusmg","ru_bonustv","ru_catcast","ru_mylifeisgood","ru_ntv","ru_rt","ru_smotrim","ru_televizor24","ru_tvbricks","ru_tvteleport","ru_zabava","rw","sa","sd","se","se_pluto","se_samsung","sg","si","si_xploretv","sk","sk_antik","sl","sm","sn","so","so_premiumfree","sr","st","sv","sx","sy","td","tg","th","th_v2hcdn","tj","tl","tm","tn","tr","tr_ceren","tr_digiturk","tr_trt","tt","tv","tw","tz","ua","ua_olltv","ug","uk","us","us_pluto","us_samsung","us_stirr","us_xumo","uy","uz","vc","ve","vg","vi","vn","vu","ws","xk","ye","za","zm","zw"];
+    state.playlists = files.map(function(f){
+      var parts=f.split('_'),cc=parts[0],prov=parts.slice(1).join('_');
+      var pname='';if(prov&&providers[prov])pname=providers[prov];else if(prov)pname=prov.replace(/_/g,' ').replace(/\b\w/g,function(l){return l.toUpperCase()});
+      return{id:f,name:countries[cc]||cc.toUpperCase(),provider:pname,country:countries[cc]||cc.toUpperCase(),url:RAW_BASE+'/'+f+'.m3u'};
     });
-}
-
-function displayChannelsByCountry(channels) {
-  var groups = {};
-  for (var i = 0; i < channels.length; i++) {
-    var ch = channels[i];
-    var cc = extractCountry(ch.tvgId) || 'unknown';
-    if (!groups[cc]) groups[cc] = [];
-    groups[cc].push(ch);
-  }
-
-  var sorted = Object.keys(groups).sort(function(a, b) {
-    var na = PLAYLISTS[a] || a.toUpperCase();
-    var nb = PLAYLISTS[b] || b.toUpperCase();
-    return na.localeCompare(nb);
-  });
-
-  var list = document.getElementById('channelList');
-  if (!sorted.length) {
-    list.innerHTML = '<div class="empty-state"><p>No channels found</p></div>';
-    return;
-  }
-
-  var idx = 0;
-  var html = '';
-  for (var g = 0; g < sorted.length; g++) {
-    var cc = sorted[g];
-    var chs = groups[cc];
-    html += '<div class="country-group">';
-    html += '<div style="padding:10px 24px;font-size:0.85rem;font-weight:700;color:#58a6ff;background:#161b22;border-bottom:1px solid #21262d;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5">';
-    html += '<span style="font-size:1.2rem">'+getFlag(cc)+'</span>';
-    html += escapeHtml(PLAYLISTS[cc] || cc.toUpperCase());
-    html += '<span style="font-size:0.6rem;color:#8b949e;margin-left:auto">'+chs.length+'</span></div>';
-    for (var c = 0; c < chs.length; c++) {
-      html += '<div class="channel-item" data-idx="'+idx+'">'
-        + '<div class="info">'
-        + '<div class="ch-name">'+escapeHtml(chs[c].name||'Unknown')+'</div>'
-        + '<div class="ch-url">'+escapeHtml(chs[c].url)+'</div>'
-        + '</div>'
-        + '<div class="ch-actions">'
-        + '<button class="play-btn" data-action="play">▶ Play</button>'
-        + '<button class="copy-btn" data-action="copy">Copy</button>'
-        + '</div>'
-        + '</div>';
-      idx++;
-    }
-  }
-
-  if (!html) {
-    list.innerHTML = '<div class="empty-state"><p>No channels</p></div>';
-    return;
-  }
-  list.innerHTML = html;
-}
-
-function buildSidebar() {
-  var files = ["ad","ae","af","ag","al","am","ao","ar","at","at_pluto","at_samsung","au","au_samsung","aw","az","ba","ba_morescreens","bb","bd","be","be_samsung","bf","bg","bh","bi","bj","bm","bn","bo","bq","br","br_pluto","br_samsung","bs","bw","by","bz","bz_nexgen","ca","ca_pluto","ca_samsung","ca_stingray","cd","cf","cg","ch","ch_pluto","ch_samsung","ci","cl","cm","cn","cn_112114","cn_cctv","cn_cgtn","cn_yeslivetv","co","cr","cu","cv","cw","cy","cz","de","de_pluto","de_rakuten","de_samsung","dj","dk","dk_pluto","dk_samsung","dm","do","dz","ec","ee","eg","eh","er","es","es_pluto","es_rakuten","es_samsung","es_yowi","et","fi","fi_rakuten","fi_samsung","fj","fm","fo","fr","fr_bfm","fr_fashiontv","fr_groupecanalplus","fr_groupem6","fr_persiana","fr_pluto","fr_rakuten","fr_samsung","ga","ge","gf","gh","gl","gm","gn","gp","gq","gr","gt","gt_streamhispanatv","gu","gy","hk","hn","hr","ht","hu","id","id_denstv","ie","ie_samsung","il","in","in_distro","in_doordarshan","in_pishow","in_samsung","in_tango","iq","ir","ir_telewebion","ir_wnslive","is","it","it_pluto","it_rakuten","it_samsung","jm","jo","jp","ke","kg","kh","kh_happywatch99","km","kn","kp","kr","kw","kz","la","lb","lc","li","lk","lr","lt","lu","lu_samsung","lv","ly","ma","mc","md","me","mg","mk","ml","mm","mn","mn_skygo","mo","mq","mr","mt","mt_smashplus","mu","mv","mw","mx","mx_amagi","mx_multimedios","mx_pluto","mx_samsung","my","mz","na","ne","ng","ni","nl","nl_samsung","no","no_pluto","no_samsung","np","nz","nz_samsung","om","pa","pe","pe_opencaster","pf","pg","ph","ph_comclark","pk","pl","pl_mediateka","pl_rakuten","pr","ps","pt","pt_samsung","py","qa","ro","rs","ru","ru_15plusmg","ru_bonustv","ru_catcast","ru_mylifeisgood","ru_ntv","ru_rt","ru_smotrim","ru_televizor24","ru_tvbricks","ru_tvteleport","ru_zabava","rw","sa","sd","se","se_pluto","se_samsung","sg","si","si_xploretv","sk","sk_antik","sl","sm","sn","so","so_premiumfree","sr","st","sv","sx","sy","td","tg","th","th_v2hcdn","tj","tl","tm","tn","tr","tr_gem","tr_onetv","tt","tw","tz","ua","ug","uk","uk_bbc","uk_distro","uk_pluto","uk_rakuten","uk_samsung","uk_sportstribal","us","us_30a","us_3abn","us_abcnews","us_afrolandtv","us_amagi","us_canelatv","us_cbsn","us_cineversetv","us_distro","us_firetv","us_frequency","us_glewedtv","us_klowdtv","us_local","us_malimartv","us_pbs","us_plex","us_pluto","us_roku","us_samsung","us_sofast","us_ssh101","us_stirr","us_tcl","us_tubi","us_uplynk","us_vegasplus","us_vizio","us_wfmz","us_wowza","us_xumo","uy","uz","va","ve","vg","vi","vn","ws","xk","ye","yt","za","za_freevisiontv","zm","zw"];
-  allPlaylists = files.map(function(f) {
-    var parts = f.split('_');
-    var countryCode = parts[0];
-    var provider = parts.slice(1).join('_');
-    var country = PLAYLISTS[countryCode] || countryCode.toUpperCase();
-    var providerName = '';
-    if (provider && PROVIDER_PREFIXES[provider]) providerName = PROVIDER_PREFIXES[provider];
-    else if (provider) providerName = provider.replace(/_/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
-    return { id: f, name: providerName ? country + ' (' + providerName + ')' : country, country: country, providerName: providerName, url: 'https://raw.githubusercontent.com/iptv-org/iptv/master/streams/' + f + '.m3u' };
-  });
-  allPlaylists.sort(function(a, b) {
-    if (a.country !== b.country) return a.country.localeCompare(b.country);
-    if (!a.providerName && b.providerName) return -1;
-    if (a.providerName && !b.providerName) return 1;
-    return (a.providerName||'').localeCompare(b.providerName||'');
-  });
-  renderSidebar(allPlaylists);
-}
-
-var allPlaylists = [];
-
-function renderSidebar(playlists) {
-  var list = document.getElementById('playlistList');
-  document.getElementById('playlistCount').textContent = playlists.length + ' playlists';
-  list.innerHTML = playlists.map(function(p) {
-    var active = p.id === currentPlaylistId ? 'active' : '';
-    var badge = p.providerName ? '<span class="provider">'+escapeHtml(p.providerName)+'</span>' : '<span class="badge">All</span>';
-    return '<div class="playlist-item '+active+'" data-id="'+p.id+'" onclick="selectPlaylist(\''+p.id+'\')"><span class="flag">'+getFlag(p.id)+'</span><span class="name">'+escapeHtml(p.country)+'</span>'+badge+'</div>';
-  }).join('');
-}
-
-function filterPlaylists() {
-  var q = document.getElementById('sidebarSearch').value.toLowerCase();
-  renderSidebar(allPlaylists.filter(function(p) { return p.country.toLowerCase().includes(q) || (p.providerName && p.providerName.toLowerCase().includes(q)); }));
-}
-
-function selectPlaylist(id) {
-  var p = allPlaylists.find(function(x) { return x.id === id; });
-  if (!p) return;
-  currentPlaylistUrl = p.url;
-  currentPlaylistId = id;
-  document.getElementById('currentPlaylistName').textContent = p.country + (p.providerName ? ' ('+p.providerName+')' : '');
-
-  var list = document.getElementById('channelList');
-  list.innerHTML = '<div class="loading"><div class="spinner"></div><span>Loading...</span></div>';
-  document.getElementById('channelCount').textContent = '';
-  document.getElementById('channelFilter').style.display = 'none';
-  document.getElementById('customUrl').value = p.url;
-
-  fetch(p.url)
-    .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
-    .then(function(data) {
-      currentChannels = parseM3u(data);
-      filteredChannels = currentChannels;
-      displayChannelsFlat(currentChannels);
-      document.getElementById('channelCount').textContent = currentChannels.length + ' channels';
-      document.getElementById('channelFilter').style.display = 'block';
-      document.getElementById('channelSearch').value = '';
-    })
-    .catch(function(err) {
-      list.innerHTML = '<div class="empty-state"><p style="color:#f85149">Failed: '+escapeHtml(err.message)+'</p></div>';
+    state.playlists.sort(function(a,b){
+      var d=a.country.localeCompare(b.country);if(d)return d;
+      if(!a.provider&&b.provider)return -1;if(a.provider&&!b.provider)return 1;
+      return(a.provider||'').localeCompare(b.provider||'');
     });
+    renderPlaylists();
+  }
 
-  document.querySelectorAll('.playlist-item').forEach(function(el) { el.classList.remove('active'); });
-  var item = document.querySelector('.playlist-item[data-id="'+id+'"]');
-  if (item) item.classList.add('active');
-}
+  function renderPlaylists(filter){
+    var list=document.getElementById('playlistList');
+    var items=filter?state.playlists.filter(function(p){return p.country.toLowerCase().includes(filter)||(p.provider&&p.provider.toLowerCase().includes(filter))}):state.playlists;
+    document.getElementById('countBar').textContent=items.length+' playlists';
+    list.innerHTML=items.map(function(p){
+      var active=p.id===state.playlistId?'active':'';
+      var tag=p.provider?'<span class="tag">'+esc(p.provider)+'</span>':'';
+      return '<div class="item '+active+'" data-id="'+p.id+'"><span class="flag">'+getFlag(p.id)+'</span><span class="label">'+esc(p.country)+'</span>'+tag+'</div>';
+    }).join('');
+  }
 
-function loadCustomUrl() {
-  var url = document.getElementById('customUrl').value.trim();
-  if (!url) return;
-  currentPlaylistUrl = url;
-  currentPlaylistId = null;
-
-  var list = document.getElementById('channelList');
-  list.innerHTML = '<div class="loading"><div class="spinner"></div><span>Loading...</span></div>';
-  document.getElementById('channelCount').textContent = '';
-  document.getElementById('channelFilter').style.display = 'none';
-
-  fetch(url)
-    .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
-    .then(function(data) {
-      currentChannels = parseM3u(data);
-      filteredChannels = currentChannels;
-      displayChannelsFlat(currentChannels);
-      document.getElementById('channelCount').textContent = currentChannels.length + ' channels';
-      document.getElementById('channelFilter').style.display = 'block';
-      document.getElementById('channelSearch').value = '';
-      document.getElementById('currentPlaylistName').textContent = 'Custom Playlist';
-    })
-    .catch(function(err) {
-      list.innerHTML = '<div class="empty-state"><p style="color:#f85149">Failed: '+escapeHtml(err.message)+'</p></div>';
+  function selectPlaylist(id){
+    var p=state.playlists.find(function(x){return x.id===id});
+    if(!p)return;
+    state.playlistUrl=p.url;state.playlistId=id;
+    currentTitle.textContent=p.country+(p.provider?' ('+p.provider+')':'');
+    customUrl.value=p.url;
+    loadM3u(p.url,function(chs){
+      state.channels=chs;state.filtered=chs;
+      renderFlat(chs);
+      channelCount.textContent=chs.length+' channels';
+      channelFilter.style.display='block';
+      searchChannels.value='';
     });
-}
+    document.querySelectorAll('.item').forEach(function(el){el.classList.remove('active')});
+    var el=document.querySelector('.item[data-id="'+id+'"]');if(el)el.classList.add('active');
+  }
 
-function parseM3u(content) {
-  var channels = [];
-  var lines = content.split('\n');
-  var current = null;
-  for (var i = 0; i < lines.length; i++) {
-    var t = lines[i].trim();
-    if (t.startsWith('#EXTM3U')) continue;
-    if (t.startsWith('#EXTINF:')) {
-      current = { name: '', url: '', tvgId: '' };
-      var m = t.match(/,(.+)$/);
-      if (m) current.name = m[1].trim();
-      var idMatch = t.match(/tvg-id="([^"]*)"/);
-      if (idMatch) current.tvgId = idMatch[1];
-    } else if (t && !t.startsWith('#') && current) {
-      current.url = t;
-      channels.push(current);
-      current = null;
+  function loadM3u(url,cb){
+    channelList.innerHTML='<div class="loading-state"><div class="spinner"></div><span>Loading...</span></div>';
+    channelCount.textContent='';channelFilter.style.display='none';
+    fetch(url).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text()})
+      .then(function(d){cb(parseM3u(d))})
+      .catch(function(err){channelList.innerHTML='<div class="empty-state"><p style="color:#f85149">Failed: '+esc(err.message)+'</p></div>'});
+  }
+
+  function renderFlat(chs){
+    if(!chs.length){channelList.innerHTML='<div class="empty-state"><p>No channels found</p></div>';return}
+    channelList.innerHTML=chs.map(function(ch,i){
+      return '<div class="channel-item" data-idx="'+i+'">'
+        +'<div class="info"><div class="name">'+esc(ch.name||'Unknown')+'</div><div class="url">'+esc(ch.url)+'</div></div>'
+        +'<div class="actions"><button class="play" data-act="play">▶ Play</button><button class="copy" data-act="copy">Copy</button></div></div>';
+    }).join('');
+  }
+
+  function renderByCountry(chs){
+    var groups={};
+    chs.forEach(function(ch){
+      var cc=extractCountry(ch.tvgId)||'unknown';
+      if(!groups[cc]) groups[cc]=[];groups[cc].push(ch);
+    });
+    var keys=Object.keys(groups).sort(function(a,b){
+      return(countries[a]||a.toUpperCase()).localeCompare(countries[b]||b.toUpperCase());
+    });
+    if(!keys.length){channelList.innerHTML='<div class="empty-state"><p>No channels found</p></div>';return}
+    var html='',idx=0;
+    keys.forEach(function(cc){
+      var chs=groups[cc];
+      html+='<div class="country-group">'
+        +'<div class="group-header"><span class="flag">'+getFlag(cc)+'</span>'+esc(countries[cc]||cc.toUpperCase())+'<span class="num">'+chs.length+'</span></div>';
+      chs.forEach(function(ch){
+        html+='<div class="channel-item" data-idx="'+idx+'">'
+          +'<div class="info"><div class="name">'+esc(ch.name||'Unknown')+'</div><div class="url">'+esc(ch.url)+'</div></div>'
+          +'<div class="actions"><button class="play" data-act="play">▶ Play</button><button class="copy" data-act="copy">Copy</button></div></div>';
+        idx++;
+      });
+      html+='</div>';
+    });
+    channelList.innerHTML=html;
+  }
+
+  function loadCategory(url){
+    currentTitle.textContent=state.tab==='movies'?'🎬 Movies':'🎞️ Films';
+    loadM3u(url,function(chs){
+      state.channels=chs;state.filtered=chs;
+      renderByCountry(chs);
+      channelCount.textContent=chs.length+' channels';
+      channelFilter.style.display='block';
+      searchChannels.value='';
+    });
+  }
+
+  function switchTab(tab){
+    state.tab=tab;
+    document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active')});
+    document.querySelector('.tab[data-tab="'+tab+'"]').classList.add('active');
+    searchChannels.value='';
+    if(tab==='countries'){
+      sidebar.style.display='flex';
+      document.getElementById('btnBrowse').style.display='inline-block';
+      if(state.playlistId) selectPlaylist(state.playlistId);
+      else selectPlaylist('us');
+    }else{
+      sidebar.style.display='none';
+      document.getElementById('btnBrowse').style.display='none';
+      channelFilter.style.display='none';
+      channelCount.textContent='';
+      var url=tab==='movies'?CAT_BASE+'/movies.m3u':CAT_BASE+'/series.m3u';
+      state.playlistUrl=url;customUrl.value=url;
+      loadCategory(url);
     }
   }
-  return channels;
-}
 
-function displayChannelsFlat(channels) {
-  var list = document.getElementById('channelList');
-  if (!channels.length) { list.innerHTML = '<div class="empty-state"><p>No channels found</p></div>'; return; }
-  list.innerHTML = channels.map(function(ch, i) {
-    return '<div class="channel-item" data-idx="'+i+'">'
-      + '<div class="info"><div class="ch-name">'+escapeHtml(ch.name||'Unknown')+'</div><div class="ch-url">'+escapeHtml(ch.url)+'</div></div>'
-      + '<div class="ch-actions">'
-      + '<button class="play-btn" data-action="play">▶ Play</button>'
-      + '<button class="copy-btn" data-action="copy">Copy</button></div></div>';
-  }).join('');
-}
-
-function filterChannels() {
-  var q = document.getElementById('channelSearch').value.toLowerCase();
-  filteredChannels = currentChannels.filter(function(ch) { return ch.name.toLowerCase().includes(q) || ch.url.toLowerCase().includes(q); });
-  if (currentSource === 'countries') {
-    displayChannelsFlat(filteredChannels);
-  } else {
-    displayChannelsByCountry(filteredChannels);
-  }
-}
-
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('mobile-show'); }
-
-function showToast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2000); }
-
-function escapeHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
-
-function closePlayer() {
-  document.getElementById('playerModal').classList.remove('open');
-  if (hls) { hls.destroy(); hls = null; }
-  var v = document.getElementById('playerVideo');
-  v.removeAttribute('src');
-  if (document.fullscreenElement) document.exitFullscreen();
-}
-
-function copyCurrentUrl() { if (!currentPlaylistUrl) return showToast('No playlist loaded'); navigator.clipboard.writeText(currentPlaylistUrl).then(function() { showToast('Copied!'); }).catch(function(){}); }
-
-document.getElementById('channelList').addEventListener('click', function(e) {
-  var btn = e.target.closest('button[data-action]');
-  if (!btn) return;
-  var item = btn.closest('.channel-item');
-  if (!item) return;
-  var ch = filteredChannels[parseInt(item.dataset.idx)];
-  if (!ch) return;
-  if (btn.dataset.action === 'play') {
-    document.getElementById('playerTitle').textContent = ch.name;
-    document.getElementById('playerModal').classList.add('open');
-    var video = document.getElementById('playerVideo');
-    if (hls) { hls.destroy(); hls = null; }
+  function playChannel(ch){
+    document.getElementById('playerTitle').textContent=ch.name;
+    document.getElementById('playerOverlay').classList.add('open');
+    if(hls){hls.destroy();hls=null}
     video.removeAttribute('src');
-    try { video.requestFullscreen(); } catch(e) {}
-    if (ch.url.indexOf('.m3u8') > -1 && Hls.isSupported()) {
-      hls = new Hls();
+    try{video.requestFullscreen()}catch(e){}
+    if(ch.url.indexOf('.m3u8')>-1&&typeof Hls!=='undefined'&&Hls.isSupported()){
+      hls=new Hls();
       hls.loadSource(ch.url);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play().catch(function(){}); });
-    } else {
-      video.src = ch.url;
+      hls.on(Hls.Events.MANIFEST_PARSED,function(){video.play().catch(function(){})});
+    }else{
+      video.src=ch.url;
       video.play().catch(function(){});
     }
-  } else if (btn.dataset.action === 'copy') {
-    navigator.clipboard.writeText(ch.url).then(function() { showToast('Copied!'); }).catch(function(){});
   }
-});
 
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePlayer(); });
+  function closePlayer(){
+    document.getElementById('playerOverlay').classList.remove('open');
+    if(hls){hls.destroy();hls=null}
+    video.removeAttribute('src');
+    if(document.fullscreenElement)document.exitFullscreen();
+  }
 
-buildSidebar();
+  function loadCustomUrl(){
+    var url=customUrl.value.trim();
+    if(!url)return;
+    state.playlistUrl=url;state.playlistId=null;
+    currentTitle.textContent='Custom Playlist';
+    loadM3u(url,function(chs){
+      state.channels=chs;state.filtered=chs;
+      renderFlat(chs);
+      channelCount.textContent=chs.length+' channels';
+      channelFilter.style.display='block';
+      searchChannels.value='';
+    });
+  }
+
+  /* Events */
+
+  document.getElementById('tabs').addEventListener('click',function(e){
+    var tab=e.target.closest('.tab');if(!tab)return;
+    switchTab(tab.dataset.tab);
+  });
+
+  document.getElementById('btnBrowse').addEventListener('click',function(){
+    sidebar.classList.toggle('open');
+  });
+
+  document.getElementById('btnLoad').addEventListener('click',loadCustomUrl);
+
+  document.getElementById('btnCopy').addEventListener('click',function(){
+    if(!state.playlistUrl)return showToast('No playlist loaded');
+    navigator.clipboard.writeText(state.playlistUrl).then(function(){showToast('Copied!')}).catch(function(){});
+  });
+
+  document.getElementById('searchPlaylists').addEventListener('input',function(){
+    renderPlaylists(this.value.toLowerCase());
+  });
+
+  document.getElementById('searchChannels').addEventListener('input',function(){
+    var q=this.value.toLowerCase();
+    state.filtered=state.channels.filter(function(ch){return ch.name.toLowerCase().includes(q)||ch.url.toLowerCase().includes(q)});
+    if(state.tab==='countries') renderFlat(state.filtered);
+    else renderByCountry(state.filtered);
+  });
+
+  document.getElementById('playlistList').addEventListener('click',function(e){
+    var item=e.target.closest('.item');if(!item)return;
+    selectPlaylist(item.dataset.id);
+    if(window.innerWidth<=600)sidebar.classList.remove('open');
+  });
+
+  channelList.addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-act]');if(!btn)return;
+    var item=btn.closest('.channel-item');if(!item)return;
+    var ch=state.filtered[parseInt(item.dataset.idx)];if(!ch)return;
+    if(btn.dataset.act==='play') playChannel(ch);
+    else if(btn.dataset.act==='copy') navigator.clipboard.writeText(ch.url).then(function(){showToast('Copied!')}).catch(function(){});
+  });
+
+  document.getElementById('btnClosePlayer').addEventListener('click',closePlayer);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closePlayer()});
+
+  /* Init */
+  buildPlaylists();
+  switchTab('countries');
+})();
 </script>
 </body>
 </html>
